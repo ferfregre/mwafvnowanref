@@ -1,8 +1,8 @@
 --[[
-    MM2 - X Hub (Mobile Edition)
-    Переработанный скрипт для мобильных устройств.
-    Меню открывается/закрывается кнопкой в правом верхнем углу.
-    Все элементы оптимизированы под касания.
+    MM2 - X Hub (Mobile Edition) – FIXED
+    Полностью переработанный скрипт для мобильных устройств.
+    Кнопка в правом верхнем углу открывает/закрывает меню.
+    Все элементы адаптированы под касания.
 --]]
 
 -- Проверка игры
@@ -146,20 +146,19 @@ gui.Name = "MM2_XHub_Mobile"
 gui.ResetOnSpawn = false
 gui.Parent = playerGui
 
--- Кнопка открытия/закрытия меню (плавающая)
+-- ==================== КНОПКА ОТКРЫТИЯ МЕНЮ (УСИЛЕННАЯ) ====================
 local toggleButton = Instance.new("ImageButton")
 toggleButton.Name = "ToggleButton"
-toggleButton.Size = UDim2.new(0, 60, 0, 60)
-toggleButton.Position = UDim2.new(1, -75, 0, 15)
+toggleButton.Size = UDim2.new(0, 70, 0, 70)
+toggleButton.Position = UDim2.new(1, -85, 0, 15)
 toggleButton.BackgroundColor3 = Color3.fromRGB(30, 30, 40)
 toggleButton.BackgroundTransparency = 0.2
 toggleButton.BorderSizePixel = 0
-toggleButton.Image = "rbxassetid://6031091079" -- иконка шестерёнки (можно заменить)
+toggleButton.Image = "rbxassetid://6031091079"
 toggleButton.ImageColor3 = Color3.new(1, 1, 1)
 toggleButton.ScaleType = Enum.ScaleType.Fit
 toggleButton.Parent = gui
 
--- Скругление и тень
 local cornerBtn = Instance.new("UICorner", toggleButton)
 cornerBtn.CornerRadius = UDim.new(0.5, 0)
 local shadowBtn = Instance.new("UIShadow", toggleButton)
@@ -167,7 +166,7 @@ shadowBtn.Color = Color3.new(0, 0, 0)
 shadowBtn.Offset = Vector2.new(0, 2)
 shadowBtn.Blur = 4
 
--- Основное меню (скрыто по умолчанию)
+-- ==================== МЕНЮ ====================
 local menuFrame = Instance.new("Frame")
 menuFrame.Name = "MenuFrame"
 menuFrame.Size = UDim2.new(0, 350, 0, 500)
@@ -178,11 +177,8 @@ menuFrame.BorderSizePixel = 0
 menuFrame.Visible = false
 menuFrame.Parent = gui
 
--- Скругление углов меню
 local cornerMenu = Instance.new("UICorner", menuFrame)
 cornerMenu.CornerRadius = UDim.new(0, 16)
-
--- Тень меню
 local shadowMenu = Instance.new("UIShadow", menuFrame)
 shadowMenu.Color = Color3.new(0, 0, 0)
 shadowMenu.Offset = Vector2.new(0, 8)
@@ -205,7 +201,6 @@ titleLabel.TextColor3 = Color3.new(1, 1, 1)
 titleLabel.TextScaled = true
 titleLabel.Font = Enum.Font.GothamBold
 
--- Кнопка закрытия (X) внутри заголовка
 local closeBtn = Instance.new("TextButton", titleBar)
 closeBtn.Size = UDim2.new(0, 30, 0, 30)
 closeBtn.Position = UDim2.new(1, -35, 0, 5)
@@ -236,15 +231,12 @@ scrollContainer.BorderSizePixel = 0
 scrollContainer.CanvasSize = UDim2.new(0, 0, 0, 0)
 scrollContainer.ScrollBarThickness = 6
 
--- Будем создавать вкладки как группы кнопок/элементов
-
--- Переменные для хранения элементов
+-- ==================== ФУНКЦИИ ДЛЯ СОЗДАНИЯ UI ====================
 local elements = {}
 
--- Функция создания группы (вкладки)
 local function createTab(title)
     local frame = Instance.new("Frame", scrollContainer)
-    frame.Size = UDim2.new(1, 0, 0, 0) -- высота будет динамической
+    frame.Size = UDim2.new(1, 0, 0, 0)
     frame.BackgroundTransparency = 1
     frame.LayoutOrder = #elements + 1
 
@@ -266,7 +258,6 @@ local function createTab(title)
     return elementsTab
 end
 
--- Функция добавления переключателя (toggle)
 local function addToggle(tab, text, default, callback)
     local toggleFrame = Instance.new("Frame", tab.content)
     toggleFrame.Size = UDim2.new(1, 0, 0, 35)
@@ -312,13 +303,9 @@ local function addToggle(tab, text, default, callback)
         if callback then callback(state) end
     end)
 
-    -- Сохраняем ссылку на кнопку для возможного обновления
     tab.uiElements[#tab.uiElements+1] = toggleBtn
-    -- Обновляем высоту контента
     tab.content.Size = UDim2.new(1, 0, 0, #tab.uiElements * 40)
-    -- Обновляем высоту frame
     tab.frame.Size = UDim2.new(1, 0, 0, #tab.uiElements * 40 + 30)
-    -- Обновляем CanvasSize
     local totalHeight = 0
     for _, t in pairs(elements) do
         totalHeight = totalHeight + t.frame.Size.Y.Offset + 10
@@ -326,7 +313,6 @@ local function addToggle(tab, text, default, callback)
     scrollContainer.CanvasSize = UDim2.new(0, 0, 0, totalHeight + 20)
 end
 
--- Функция добавления слайдера
 local function addSlider(tab, text, min, max, default, callback)
     local sliderFrame = Instance.new("Frame", tab.content)
     sliderFrame.Size = UDim2.new(1, 0, 0, 60)
@@ -409,7 +395,6 @@ local function addSlider(tab, text, min, max, default, callback)
     scrollContainer.CanvasSize = UDim2.new(0, 0, 0, totalHeight + 20)
 end
 
--- Функция добавления кнопки
 local function addButton(tab, text, callback)
     local btnFrame = Instance.new("Frame", tab.content)
     btnFrame.Size = UDim2.new(1, 0, 0, 40)
@@ -449,7 +434,6 @@ local function addButton(tab, text, callback)
 end
 
 -- ==================== СОЗДАНИЕ ВКЛАДОК И ЭЛЕМЕНТОВ ====================
--- Вкладка ESP
 local espTab = createTab("👁️ ESP")
 addToggle(espTab, "ESP Убийца", false, function(v)
     ESPEnabled.Murderer = v
@@ -478,7 +462,6 @@ addToggle(espTab, "ESP Оружие", false, function(v)
     updateESP()
 end)
 
--- Вкладка Движение
 local moveTab = createTab("🏃 Движение")
 addSlider(moveTab, "Скорость", 16, 200, 16, function(v)
     WalkspeedValue = v
@@ -495,7 +478,6 @@ addToggle(moveTab, "Noclip", false, function(v)
     noclipEnabled = v
 end)
 
--- Вкладка Утилиты
 local utilTab = createTab("⚡ Утилиты")
 addButton(utilTab, "Телепорт к убийце", function()
     for _, plr in pairs(Players:GetPlayers()) do
@@ -532,7 +514,6 @@ addToggle(utilTab, "Прицел на убийцу", false, function(v)
     aimMurdererEnabled = v
 end)
 
--- Вкладка Настройки
 local settingsTab = createTab("⚙️ Настройки")
 addButton(settingsTab, "Загрузить Infinite Yield", function()
     loadstring(game:HttpGet('https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source'))()
@@ -544,7 +525,6 @@ addButton(settingsTab, "Закрыть меню", function()
 end)
 
 -- ==================== ЦИКЛЫ ДЛЯ ФУНКЦИЙ ====================
--- Циклическое сохранение скорости/прыжка
 RunService.RenderStepped:Connect(function()
     if loopMovement then
         humanoid.WalkSpeed = WalkspeedValue
@@ -552,7 +532,6 @@ RunService.RenderStepped:Connect(function()
     end
 end)
 
--- Noclip
 RunService.Stepped:Connect(function()
     if noclipEnabled and LocalPlayer.Character then
         for _, part in pairs(LocalPlayer.Character:GetDescendants()) do
@@ -563,7 +542,6 @@ RunService.Stepped:Connect(function()
     end
 end)
 
--- Фарм монет
 local function farmCoins()
     if not FarmCoinsEnabled then return end
     local container = Workspace:FindFirstChild("Normal") and Workspace.Normal:FindFirstChild("CoinContainer")
@@ -578,7 +556,6 @@ local function farmCoins()
 end
 RunService.Heartbeat:Connect(farmCoins)
 
--- Kill All
 local function killAllLoop()
     if not killAllEnabled then return end
     for _, plr in pairs(Players:GetPlayers()) do
@@ -590,7 +567,6 @@ local function killAllLoop()
 end
 RunService.Heartbeat:Connect(killAllLoop)
 
--- Прицел на убийцу (если вы шериф)
 local function aimAtMurderer()
     if not aimMurdererEnabled then return end
     for _, plr in pairs(Players:GetPlayers()) do
@@ -607,24 +583,34 @@ RunService.RenderStepped:Connect(aimAtMurderer)
 
 -- ==================== ОТКРЫТИЕ/ЗАКРЫТИЕ МЕНЮ ====================
 local function toggleMenu()
+    print("toggleMenu вызвана!") -- Отладочное сообщение
     menuOpen = not menuOpen
     menuFrame.Visible = menuOpen
+    print("menuOpen =", menuOpen, "visible =", menuFrame.Visible)
 end
 
+-- Усиленные обработчики нажатий
 toggleButton.MouseButton1Click:Connect(toggleMenu)
 toggleButton.TouchTap:Connect(toggleMenu)
+toggleButton.TouchEnded:Connect(function(input)
+    if input and input.UserInputType == Enum.UserInputType.Touch then
+        toggleMenu()
+    end
+end)
+toggleButton.InputBegan:Connect(function(input)
+    if input.UserInputType == Enum.UserInputType.Touch then
+        toggleMenu()
+    end
+end)
 
 -- ==================== АДАПТАЦИЯ ПОД МОБИЛЬНЫЕ ЭКРАНЫ ====================
--- Увеличиваем размеры элементов для мобильных
 local function resizeElements()
     local screenSize = game:GetService("GuiService"):GetScreenResolution()
     if screenSize.X < 600 then
-        -- Мобильные устройства
         menuFrame.Size = UDim2.new(0, screenSize.X - 40, 0, screenSize.Y - 100)
         menuFrame.Position = UDim2.new(0.5, -(screenSize.X - 40)/2, 0.5, -(screenSize.Y - 100)/2)
-        toggleButton.Size = UDim2.new(0, 60, 0, 60)
-        toggleButton.Position = UDim2.new(1, -75, 0, 15)
-        -- Масштабируем шрифты автоматически через TextScaled
+        toggleButton.Size = UDim2.new(0, 70, 0, 70)
+        toggleButton.Position = UDim2.new(1, -85, 0, 15)
     end
 end
 resizeElements()
